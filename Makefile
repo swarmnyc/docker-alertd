@@ -1,17 +1,12 @@
-DIR=./docker-alertd-dist
+.PHONY: help
 
-all: build docker
+help:
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
-build:
-	@echo "building distributions"
-	@rm -r $(DIR)
-	@mkdir -p $(DIR)/osx $(DIR)/linux $(DIR)/windows
-	@go build -o $(DIR)/osx/docker-alertd
-	@GOOS=linux go build -o $(DIR)/linux/docker-alertd
-	@GOOS=windows go build -o $(DIR)/windows/docker-alertd.exe
-
-docker:
+build: ## Build docker image
 	@echo "building docker image"
-	@docker build -t deltaskelta/docker-alertd .
+	@docker build -t swarmnyc/docker-alertd .
+
+push: ## Push image to swarmnyc/docker-alertd
 	@echo "pushing to docker registry"
-	@docker push deltaskelta/docker-alertd
+	@docker push swarmnyc/docker-alertd

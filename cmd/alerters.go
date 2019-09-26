@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"net/smtp"
 	"net/url"
 	"reflect"
+	"strconv"
 	"strings"
-
+	"gopkg.in/gomail.v2"
 	"github.com/pkg/errors"
 )
 
@@ -23,6 +23,7 @@ type Alerter interface {
 // Email implements the Alerter interface and sends emails
 type Email struct {
 	SMTP     string
+	Username string
 	Password string
 	Port     string
 	From     string
@@ -32,9 +33,6 @@ type Email struct {
 
 // Alert sends an email alert
 func (e Email) Alert(a *Alert) error {
-	// alerts in string form
-	alerts := a.DumpEmail()
-
 	subject := e.Subject + ": "
 	for i := range a.SubjectAddendums {
 		// add addendums to the subject
@@ -44,16 +42,25 @@ func (e Email) Alert(a *Alert) error {
 		}
 	}
 
-	// The email message formatted properly
-	formattedMsg := []byte(fmt.Sprintf("To: %s\r\nSubject: %s\r\n\r\n%s\r\n",
-		e.To, subject, alerts))
+	to := strings.Join(e.To, ",")
 
-	// Set up authentication/address information
-	auth := smtp.PlainAuth("", e.From, e.Password, e.SMTP)
-	addr := fmt.Sprintf("%s:%s", e.SMTP, e.Port)
+	m := gomail.NewMessage()
+    
+	// Set the main email part to use HTML.
+	m.SetBody("text/html", a.DumpEmail())
 
-	err := smtp.SendMail(addr, auth, e.From, e.To, formattedMsg)
-	if err != nil {
+	// Construct the message headers, including a Configuration Set and a Tag.
+	m.SetHeaders(map[string][]string{
+			"From": {e.From},
+			"To": {to},
+			"Subject": {subject},
+	})
+
+	// Send the email.
+	port, _ := strconv.Atoi(e.Port)
+	d := gomail.NewPlainDialer(e.SMTP, port, e.Username, e.Password)
+
+	if err := d.DialAndSend(m); err != nil {
 		return errors.Wrap(err, "error sending email")
 	}
 
@@ -80,6 +87,10 @@ func (e Email) Valid() error {
 
 	if e.From == "" {
 		errString = append(errString, ErrEmailNoFrom.Error())
+	}
+
+	if e.Username == "" {
+		errString = append(errString, ErrEmailNoUser.Error())
 	}
 
 	if e.Password == "" {

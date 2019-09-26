@@ -14,7 +14,7 @@
 
 package main
 
-import "github.com/deltaskelta/docker-alertd/cmd"
+import "app/cmd"
 
 func main() {
 	cmd.Execute()

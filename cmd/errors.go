@@ -12,6 +12,7 @@ var (
 	ErrEmailNoSMTP           = errors.New("no email SMTP server")
 	ErrEmailNoTo             = errors.New("no email to addresses")
 	ErrEmailNoFrom           = errors.New("no email from addresses")
+	ErrEmailNoUser           = errors.New("no email username")
 	ErrEmailNoPass           = errors.New("no email password")
 	ErrEmailNoPort           = errors.New("no email port")
 	ErrEmailNoSubject        = errors.New("no email subject")

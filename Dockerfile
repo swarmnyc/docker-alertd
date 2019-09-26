@@ -23,7 +23,9 @@
 #         deltaskelta/docker-alertd
 #
 FROM golang:1.9
+# FROM swarmnyc/docker-alertd:latest
 
+ENV DOCKER_API_VERSION=1.40
 WORKDIR /go/src/app
 COPY . .
 

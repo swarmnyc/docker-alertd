@@ -158,6 +158,7 @@ containers:
 var email = []byte(`
 email:
   smtp: smtp.nonexistantserver.com
+  username: yourname
   password: s00p3rS33cret
   port: 587
   from: auto@freshpowpow.com

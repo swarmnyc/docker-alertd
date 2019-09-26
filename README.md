@@ -71,15 +71,19 @@ containers:
 
 # If email settings are present and active, then email alerts will be sent when an alert
 # is triggered.
-emailSettings:
+email:
   active: true
   smtp: smtp.someserver.com
+  username: username
   password: s00p3rS33cret
   port: 587
   from: auto@freshpowpow.com
   subject: "DOCKER_ALERTD"
   to:
     - jeff@gnarfresh.com
+
+slack:
+  WebhookURL: https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX
 ```
 
 ### Configuration Variables
@@ -107,6 +111,8 @@ be triggered.
 `active`: whether email settings are active or not
 
 `smtp`: the smtp server to connect to
+
+`username`: the username to use for smtp authentication
 
 `password`: the password to use for smtp authentication
 
